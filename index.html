@@ -23,24 +23,30 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            height: 100vh; /* Fixed height for viewport */
+            width: 100vw;
+            overflow: hidden; /* Prevent body scroll */
         }
 
         .retro-card {
             background-color: var(--cream-paper);
             border: 3px solid var(--earth-brown);
-            border-radius: 40px 15px 40px 15px;
-            box-shadow: 8px 8px 0px var(--earth-brown);
-            max-width: 650px;
-            width: 95%;
-            padding: 2rem;
+            border-radius: 30px 10px 30px 10px;
+            box-shadow: 6px 6px 0px var(--earth-brown);
+            max-width: 700px;
+            width: 90%;
+            max-height: 95vh; /* Keep it inside the screen */
+            padding: 1.5rem;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; /* Scroll inside card if absolutely necessary on tiny screens */
         }
 
         h1 {
             font-family: 'Gaegu', cursive;
             color: var(--earth-brown);
-            font-size: 3rem;
+            font-size: clamp(2rem, 5vh, 3rem); /* Scalable font */
             line-height: 1;
         }
 
@@ -48,12 +54,13 @@
             background-color: var(--leaf-green);
             color: white;
             border-radius: 50px;
-            padding: 12px 28px;
+            padding: 10px 24px;
             font-weight: 700;
             transition: transform 0.2s, background-color 0.2s;
             border: none;
             cursor: pointer;
             box-shadow: 0 4px 0px #5e7a45;
+            white-space: nowrap;
         }
 
         .organic-btn:hover {
@@ -76,11 +83,11 @@
         .input-field {
             background: #fff;
             border: 2px dashed var(--earth-brown);
-            border-radius: 12px;
-            padding: 8px;
-            width: 90px;
+            border-radius: 10px;
+            padding: 6px;
+            width: 80px;
             text-align: center;
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             color: var(--clay-orange);
             font-weight: bold;
         }
@@ -93,25 +100,22 @@
 
         .help-tip-btn {
             position: absolute;
-            right: -15px;
-            top: 25px;
+            right: -10px;
+            top: 22px;
             background: var(--clay-orange);
             color: white;
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: bold;
             cursor: pointer;
             border: 2px solid var(--earth-brown);
             transition: transform 0.2s;
-        }
-
-        .help-tip-btn:hover {
-            transform: scale(1.2);
+            z-index: 10;
         }
 
         #rectangle-viz {
@@ -121,31 +125,33 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 2.5rem auto;
+            margin: 1.5rem auto; /* Reduced margin for Chromebooks */
             position: relative;
             transition: all 0.5s ease;
+            max-width: 100%;
         }
 
-        .label-l { position: absolute; left: -60px; font-weight: bold; color: var(--earth-brown); }
-        .label-w { position: absolute; top: -35px; font-weight: bold; color: var(--earth-brown); }
+        .label-l { position: absolute; left: -55px; font-weight: bold; color: var(--earth-brown); font-size: 0.85rem; }
+        .label-w { position: absolute; top: -30px; font-weight: bold; color: var(--earth-brown); font-size: 0.85rem; }
 
         .status-msg {
-            min-height: 1.5rem;
+            min-height: 1.25rem;
             font-weight: 600;
+            font-size: 0.9rem;
         }
 
         .score-pill {
             background: var(--earth-brown);
             color: var(--cream-paper);
-            padding: 4px 15px;
+            padding: 3px 12px;
             border-radius: 20px;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
         }
 
         .locked {
-            background-color: #eee;
+            background-color: #f0f0f0;
             border-style: solid;
-            color: #777;
+            color: #888;
         }
 
         /* Help Modal Styles */
@@ -155,12 +161,12 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 80%;
+            width: 85%;
             background: white;
             border: 3px solid var(--earth-brown);
             border-radius: 20px;
-            padding: 1.5rem;
-            z-index: 50;
+            padding: 1.25rem;
+            z-index: 100;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
 
@@ -172,7 +178,15 @@
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.3);
-            z-index: 40;
+            z-index: 90;
+        }
+
+        /* Adjustments for tight heights (Chromebooks) */
+        @media (max-height: 600px) {
+            .retro-card { padding: 1rem; }
+            h1 { margin-bottom: 0.25rem; }
+            #rectangle-viz { margin: 1rem auto; }
+            .grid { gap: 0.5rem; padding: 0.75rem; }
         }
     </style>
 </head>
@@ -181,57 +195,57 @@
     <div id="overlay" class="overlay" onclick="closeHelp()"></div>
     
     <div id="help-modal">
-        <h3 id="help-title" class="text-xl font-bold mb-2 text-stone-800">Architect's Tip</h3>
-        <p id="help-text" class="text-stone-600 mb-4"></p>
-        <button onclick="closeHelp()" class="px-4 py-2 bg-stone-200 rounded-lg font-bold hover:bg-stone-300">Got it!</button>
+        <h3 id="help-title" class="text-lg font-bold mb-2 text-stone-800">Architect's Tip</h3>
+        <p id="help-text" class="text-sm text-stone-600 mb-4"></p>
+        <button onclick="closeHelp()" class="w-full py-2 bg-stone-200 rounded-lg font-bold hover:bg-stone-300">Got it!</button>
     </div>
 
     <div class="retro-card">
-        <div class="flex justify-between items-center mb-4">
+        <div class="flex justify-between items-center mb-2">
             <div class="score-pill">Score: <span id="score">0</span></div>
-            <div class="text-sm font-bold text-stone-500 italic">"Measure twice, build once!"</div>
+            <div class="text-[10px] sm:text-xs font-bold text-stone-500 italic">"Measure twice, build once!"</div>
         </div>
 
-        <header class="text-center mb-6">
+        <header class="text-center mb-2">
             <h1>Rectangle Architect</h1>
-            <p class="text-stone-600">Fill in the missing blueprints.</p>
+            <p class="text-xs sm:text-sm text-stone-600">Solve for the missing measurements.</p>
         </header>
 
         <!-- Visualization Area -->
-        <div class="relative py-4">
-            <div id="rectangle-viz" style="width: 200px; height: 120px;">
+        <div class="flex-grow flex items-center justify-center min-h-[120px]">
+            <div id="rectangle-viz" style="width: 150px; height: 100px;">
                 <div id="label-w" class="label-w">Width: ?</div>
                 <div id="label-l" class="label-l">Length: ?</div>
             </div>
         </div>
 
         <!-- Inputs Area -->
-        <div class="grid grid-cols-2 gap-x-12 gap-y-6 mb-8 bg-stone-100 p-6 rounded-2xl border-2 border-stone-200">
+        <div class="grid grid-cols-2 gap-x-8 gap-y-4 mb-4 bg-stone-100 p-4 rounded-xl border-2 border-stone-200">
             <div class="input-wrapper">
-                <label class="text-xs uppercase font-bold text-stone-500 mb-1">Length (L)</label>
+                <label class="text-[10px] uppercase font-bold text-stone-500 mb-1">Length (L)</label>
                 <input type="number" id="in-l" class="input-field" placeholder="?">
                 <div id="help-l" class="help-tip-btn" onclick="showHelp('length')">?</div>
             </div>
             <div class="input-wrapper">
-                <label class="text-xs uppercase font-bold text-stone-500 mb-1">Width (W)</label>
+                <label class="text-[10px] uppercase font-bold text-stone-500 mb-1">Width (W)</label>
                 <input type="number" id="in-w" class="input-field" placeholder="?">
                 <div id="help-w" class="help-tip-btn" onclick="showHelp('width')">?</div>
             </div>
             <div class="input-wrapper">
-                <label class="text-xs uppercase font-bold text-stone-400 mb-1">Area (L × W)</label>
+                <label class="text-[10px] uppercase font-bold text-stone-400 mb-1">Area (L × W)</label>
                 <input type="number" id="in-a" class="input-field" placeholder="?">
                 <div id="help-a" class="help-tip-btn" onclick="showHelp('area')">?</div>
             </div>
             <div class="input-wrapper">
-                <label class="text-xs uppercase font-bold text-stone-400 mb-1">Perimeter (2L + 2W)</label>
+                <label class="text-[10px] uppercase font-bold text-stone-400 mb-1">Perimeter (2L + 2W)</label>
                 <input type="number" id="in-p" class="input-field" placeholder="?">
                 <div id="help-p" class="help-tip-btn" onclick="showHelp('perimeter')">?</div>
             </div>
         </div>
 
-        <div id="feedback" class="status-msg text-center mb-4"></div>
+        <div id="feedback" class="status-msg text-center mb-3"></div>
 
-        <div class="flex flex-wrap justify-center gap-4">
+        <div class="flex flex-wrap justify-center gap-3">
             <button onclick="checkAnswer()" id="check-btn" class="organic-btn">Check Blueprint!</button>
             <button onclick="generateProblem()" class="organic-btn" style="background-color: var(--clay-orange); box-shadow: 0 4px 0px #b05a41;">New Project</button>
         </div>
@@ -261,27 +275,27 @@
 
         const tips = {
             length: [
-                "If you have the Area: Remember, Area = Length × Width. To find the missing side, divide the Area by the Width!",
-                "If you have the Perimeter: Subtract the two Widths from the Perimeter, then divide what's left by 2."
+                "<b>If you have the Area:</b> Remember, Area = Length × Width. To find the missing side, divide the Area by the Width!",
+                "<b>If you have the Perimeter:</b> Subtract the two Widths from the Perimeter, then divide what's left by 2."
             ],
             width: [
-                "If you have the Area: Remember, Area = Length × Width. To find the missing side, divide the Area by the Length!",
-                "If you have the Perimeter: Subtract the two Lengths from the Perimeter, then divide what's left by 2."
+                "<b>If you have the Area:</b> Remember, Area = Length × Width. To find the missing side, divide the Area by the Length!",
+                "<b>If you have the Perimeter:</b> Subtract the two Lengths from the Perimeter, then divide what's left by 2."
             ],
             area: [
-                "Area is the space inside! Multiply the Length by the Width to find it (L × W)."
+                "<b>Area is the space inside!</b> Multiply the Length by the Width to find it (L × W)."
             ],
             perimeter: [
-                "Perimeter is the distance around! Add up all four sides: Length + Length + Width + Width. Or do (L + W) × 2."
+                "<b>Perimeter is the distance around!</b> Add up all four sides: L + L + W + W. Or do (L + W) × 2."
             ]
         };
 
         function generateProblem() {
             feedback.innerText = "";
-            feedback.className = "status-msg text-center mb-4";
+            feedback.className = "status-msg text-center mb-3";
             
-            const length = Math.floor(Math.random() * 10) + 3;
-            const width = Math.floor(Math.random() * 10) + 3;
+            const length = Math.floor(Math.random() * 9) + 3; // Keep max size a bit smaller for screens
+            const width = Math.floor(Math.random() * 9) + 3;
             const area = length * width;
             const perimeter = 2 * (length + width);
 
@@ -303,12 +317,11 @@
                 el.classList.remove('locked');
             });
 
-            // Toggle help buttons based on what is unknown
             Object.keys(helpBtns).forEach(key => {
                 if (scenario.includes(key)) {
-                    helpBtns[key].style.display = 'none'; // Hide help for knowns
+                    helpBtns[key].style.display = 'none';
                 } else {
-                    helpBtns[key].style.display = 'flex'; // Show help for unknowns
+                    helpBtns[key].style.display = 'flex';
                 }
             });
 
@@ -327,7 +340,11 @@
         }
 
         function updateVisuals() {
-            const scale = 15;
+            // Adaptive scaling for the visualization
+            const cardWidth = document.querySelector('.retro-card').offsetWidth;
+            const maxVizWidth = cardWidth * 0.5;
+            const scale = Math.min(maxVizWidth / 12, 18); // Dynamically calculate scale
+            
             viz.style.width = (currentProblem.width * scale) + 'px';
             viz.style.height = (currentProblem.length * scale) + 'px';
 
@@ -368,22 +385,22 @@
                 userP === currentProblem.perimeter;
 
             if (isCorrect) {
-                feedback.innerText = "🌟 Fantastic! The blueprint is perfect.";
-                feedback.className = "status-msg text-center mb-4 text-green-600";
+                feedback.innerText = "🌟 Perfect architect! Dimensions verified.";
+                feedback.className = "status-msg text-center mb-3 text-green-600";
                 score += 10;
                 scoreDisplay.innerText = score;
                 
                 document.getElementById('label-w').innerText = `W: ${currentProblem.width}`;
                 document.getElementById('label-l').innerText = `L: ${currentProblem.length}`;
-                
-                // Hide all help buttons on success
                 Object.values(helpBtns).forEach(b => b.style.display = 'none');
             } else {
-                feedback.innerText = "Wait! The architect noticed a mistake. Check your math!";
-                feedback.className = "status-msg text-center mb-4 text-red-500";
+                feedback.innerText = "Check your measurements! Something is slightly off.";
+                feedback.className = "status-msg text-center mb-3 text-red-500";
             }
         }
 
+        // Listen for window resize to adjust rectangle scaling
+        window.onresize = updateVisuals;
         window.onload = generateProblem;
     </script>
 </body>
