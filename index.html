@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rectangle Architect - Area & Perimeter Practice</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --earth-brown: #5d4037;
+            --leaf-green: #81a263;
+            --clay-orange: #e67e5f;
+            --cream-paper: #fdfaf1;
+            --soft-black: #333333;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #f4eee0;
+            color: var(--soft-black);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .retro-card {
+            background-color: var(--cream-paper);
+            border: 3px solid var(--earth-brown);
+            border-radius: 40px 15px 40px 15px;
+            box-shadow: 8px 8px 0px var(--earth-brown);
+            max-width: 600px;
+            width: 95%;
+            padding: 2rem;
+        }
+
+        h1 {
+            font-family: 'Gaegu', cursive;
+            color: var(--earth-brown);
+            font-size: 3rem;
+            line-height: 1;
+        }
+
+        .organic-btn {
+            background-color: var(--leaf-green);
+            color: white;
+            border-radius: 50px;
+            padding: 12px 28px;
+            font-weight: 700;
+            transition: transform 0.2s, background-color 0.2s;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 0px #5e7a45;
+        }
+
+        .organic-btn:hover {
+            transform: translateY(-2px);
+            background-color: #6e8c52;
+        }
+
+        .organic-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 0px 0px #5e7a45;
+        }
+
+        .input-field {
+            background: #fff;
+            border: 2px dashed var(--earth-brown);
+            border-radius: 12px;
+            padding: 8px;
+            width: 80px;
+            text-align: center;
+            font-size: 1.25rem;
+            color: var(--clay-orange);
+            font-weight: bold;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-style: solid;
+            background-color: #fffdf5;
+        }
+
+        #rectangle-viz {
+            border: 4px solid var(--earth-brown);
+            background-color: rgba(129, 162, 99, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 2rem auto;
+            position: relative;
+            transition: all 0.5s ease;
+        }
+
+        .label-l { position: absolute; left: -45px; font-weight: bold; }
+        .label-w { position: absolute; top: -35px; font-weight: bold; }
+
+        .status-msg {
+            min-height: 1.5rem;
+            font-weight: 600;
+        }
+
+        .score-pill {
+            background: var(--earth-brown);
+            color: var(--cream-paper);
+            padding: 4px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .locked {
+            background-color: #eee;
+            border-style: solid;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="retro-card">
+        <div class="flex justify-between items-center mb-4">
+            <div class="score-pill">Score: <span id="score">0</span></div>
+            <div class="text-sm font-bold text-stone-500">Level: 4th Grade Math</div>
+        </div>
+
+        <header class="text-center mb-6">
+            <h1>Rectangle Architect</h1>
+            <p class="text-stone-600">Solve for the missing measurements!</p>
+        </header>
+
+        <!-- Visualization Area -->
+        <div class="relative py-8">
+            <div id="rectangle-viz" style="width: 200px; height: 120px;">
+                <!-- Labels -->
+                <div id="label-w" class="label-w">Width: ?</div>
+                <div id="label-l" class="label-l">Length: ?</div>
+            </div>
+        </div>
+
+        <!-- Inputs Area -->
+        <div class="grid grid-cols-2 gap-6 mb-8 bg-stone-100 p-6 rounded-2xl border-2 border-stone-200">
+            <div class="flex flex-col items-center">
+                <label class="text-sm uppercase font-bold text-stone-500 mb-1">Length</label>
+                <input type="number" id="in-l" class="input-field" placeholder="?">
+            </div>
+            <div class="flex flex-col items-center">
+                <label class="text-sm uppercase font-bold text-stone-500 mb-1">Width</label>
+                <input type="number" id="in-w" class="input-field" placeholder="?">
+            </div>
+            <div class="flex flex-col items-center">
+                <label class="text-sm uppercase font-bold text-stone-400 mb-1">Area</label>
+                <input type="number" id="in-a" class="input-field" placeholder="?">
+            </div>
+            <div class="flex flex-col items-center">
+                <label class="text-sm uppercase font-bold text-stone-400 mb-1">Perimeter</label>
+                <input type="number" id="in-p" class="input-field" placeholder="?">
+            </div>
+        </div>
+
+        <div id="feedback" class="status-msg text-center mb-4"></div>
+
+        <div class="flex justify-center gap-4">
+            <button onclick="checkAnswer()" id="check-btn" class="organic-btn">Check Architect!</button>
+            <button onclick="generateProblem()" class="organic-btn" style="background-color: var(--clay-orange); box-shadow: 0 4px 0px #b05a41;">New Blueprint</button>
+        </div>
+    </div>
+
+    <script>
+        let currentProblem = {};
+        let score = 0;
+
+        const elL = document.getElementById('in-l');
+        const elW = document.getElementById('in-w');
+        const elA = document.getElementById('in-a');
+        const elP = document.getElementById('in-p');
+        const viz = document.getElementById('rectangle-viz');
+        const feedback = document.getElementById('feedback');
+        const scoreDisplay = document.getElementById('score');
+
+        function generateProblem() {
+            feedback.innerText = "";
+            feedback.className = "status-msg text-center mb-4";
+            
+            // 1. Create a valid rectangle
+            const length = Math.floor(Math.random() * 12) + 2;
+            const width = Math.floor(Math.random() * 12) + 2;
+            const area = length * width;
+            const perimeter = 2 * (length + width);
+
+            currentProblem = { length, width, area, perimeter };
+
+            // 2. Decide which values to HIDE (provide 2, hide 2)
+            // Strategy: Always give at least one of (Area/Perimeter) to make it a challenge
+            const scenarios = [
+                ['length', 'area'], // Give these, hide width/perimeter
+                ['width', 'area'],
+                ['length', 'perimeter'],
+                ['width', 'perimeter'],
+                ['area', 'perimeter'] // The ultimate challenge
+            ];
+
+            const scenario = scenarios[Math.floor(Math.random() * scenarios.length)];
+            
+            // Reset all fields
+            [elL, elW, elA, elP].forEach(el => {
+                el.value = "";
+                el.disabled = false;
+                el.classList.remove('locked');
+            });
+
+            // Lock and fill the provided values
+            if (scenario.includes('length')) setFixed(elL, length);
+            if (scenario.includes('width')) setFixed(elW, width);
+            if (scenario.includes('area')) setFixed(elA, area);
+            if (scenario.includes('perimeter')) setFixed(elP, perimeter);
+
+            updateVisuals();
+        }
+
+        function setFixed(el, val) {
+            el.value = val;
+            el.disabled = true;
+            el.classList.add('locked');
+        }
+
+        function updateVisuals() {
+            // Scale the rectangle visually
+            const scale = 15;
+            viz.style.width = (currentProblem.width * scale) + 'px';
+            viz.style.height = (currentProblem.length * scale) + 'px';
+
+            // Update Labels
+            document.getElementById('label-w').innerText = elW.disabled ? `W: ${currentProblem.width}` : `W: ?`;
+            document.getElementById('label-l').innerText = elL.disabled ? `L: ${currentProblem.length}` : `L: ?`;
+        }
+
+        function checkAnswer() {
+            const userL = parseInt(elL.value);
+            const userW = parseInt(elW.value);
+            const userA = parseInt(elA.value);
+            const userP = parseInt(elP.value);
+
+            const isCorrect = 
+                userL === currentProblem.length &&
+                userW === currentProblem.width &&
+                userA === currentProblem.area &&
+                userP === currentProblem.perimeter;
+
+            if (isCorrect) {
+                feedback.innerText = "🌟 Perfect Architect! The dimensions match!";
+                feedback.classList.add('text-green-600');
+                score += 10;
+                scoreDisplay.innerText = score;
+                
+                // Show all values in viz
+                document.getElementById('label-w').innerText = `W: ${currentProblem.width}`;
+                document.getElementById('label-l').innerText = `L: ${currentProblem.length}`;
+            } else {
+                feedback.innerText = "Hmm, something doesn't fit. Try again!";
+                feedback.classList.add('text-red-500');
+            }
+        }
+
+        // Initialize
+        window.onload = generateProblem;
+    </script>
+</body>
+</html>
