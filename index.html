@@ -132,7 +132,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 240px; /* Slightly taller for safety */
+            min-height: 260px;
             position: relative;
         }
 
@@ -143,6 +143,13 @@
             stroke-linejoin: round;
             stroke-linecap: round;
             animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .guide-line {
+            stroke: var(--earth-brown);
+            stroke-width: 2;
+            stroke-dasharray: 4;
+            opacity: 0.3;
         }
 
         @keyframes popIn {
@@ -222,14 +229,10 @@
         </header>
 
         <div id="shape-container">
-            <!-- Increased height and centered view -->
             <svg id="svg-viz" width="400" height="280" viewBox="0 0 400 280"></svg>
         </div>
 
-        <!-- Inputs Area -->
-        <div id="inputs-grid" class="grid grid-cols-4 gap-4 mb-4 bg-stone-100 p-5 rounded-2xl border-2 border-stone-200 shadow-inner">
-            <!-- Dynamically populated -->
-        </div>
+        <div id="inputs-grid" class="grid grid-cols-4 gap-4 mb-4 bg-stone-100 p-5 rounded-2xl border-2 border-stone-200 shadow-inner"></div>
 
         <div id="feedback" class="status-msg text-center mb-3"></div>
 
@@ -257,9 +260,9 @@
                 p: "Perimeter is the distance around. Add all 4 sides: L + L + W + W."
             },
             challenge: {
-                side: "<b>The Matching Rule:</b><br>Opposite parallel sides must add up! For example, the total height of the left side (A) must equal the sum of the two vertical segments on the right (C + E).",
-                a: "<b>Split it up!</b> Cut the L-shape into two separate rectangles. Find the area of each, then add them together.",
-                p: "<b>Walk the edge:</b> Add all 6 sides together. Don't skip the inner corners!"
+                side: "<b>The Matching Rule:</b><br>Horizontal sides must balance! The top width equals the two bottom horizontal segments added together.<br><br>Vertical sides must balance! The left height equals the two right vertical segments added together.",
+                a: "<b>Split it up!</b> Look at the dotted lines. You can split this into two rectangles. Calculate Area A and Area B, then add them!",
+                p: "<b>Walk the edge:</b> Add all 6 outer sides. Don't include the dotted lines in the middle!"
             }
         };
 
@@ -268,11 +271,6 @@
             document.getElementById('mode-normal').classList.toggle('active', mode === 'normal');
             document.getElementById('mode-challenge').classList.toggle('active', mode === 'challenge');
             document.getElementById('sub-title').innerText = mode === 'normal' ? "Standard Rectangles" : "Composite L-Shapes";
-            
-            grid.className = mode === 'normal' 
-                ? "grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4 bg-stone-100 p-5 rounded-2xl border-2 border-stone-200 shadow-inner"
-                : "grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4 bg-stone-100 p-4 rounded-2xl border-2 border-stone-200 shadow-inner";
-            
             generateProblem();
         }
 
@@ -301,6 +299,7 @@
                 { id: 'p', label: 'Perimeter', val: currentProblem.p }
             ];
 
+            // Always provide at least 2 pieces of info
             const hideIdx = [];
             while(hideIdx.length < 2) {
                 let r = Math.floor(Math.random() * 4);
@@ -312,17 +311,20 @@
         }
 
         function createChallengeProblem() {
+            // Logic-Safe Generation:
+            // Side A (Full Left) = Side C (Right outer) + Side E (Inner Vertical)
+            // Side B (Full Top) = Side D (Bottom outer) + Side F (Inner Horizontal)
             const h_tot = Math.floor(Math.random() * 4) + 7; 
             const w_tot = Math.floor(Math.random() * 4) + 7; 
             const h_cut = Math.floor(Math.random() * 3) + 2; 
             const w_cut = Math.floor(Math.random() * 3) + 2; 
             
-            const sA = h_tot; // Left
-            const sB = w_tot; // Top
-            const sC = h_tot - h_cut; // Right
-            const sD = w_tot - w_cut; // Bottom
-            const sE = h_cut; // Inner Vertical
-            const sF = w_cut; // Inner Horizontal
+            const sA = h_tot; 
+            const sB = w_tot; 
+            const sC = h_tot - h_cut; 
+            const sD = w_tot - w_cut; 
+            const sE = h_cut; 
+            const sF = w_cut; 
             
             const area = (sA * sD) + (sC * sF);
             const perimeter = sA + sB + sC + sD + sE + sF;
@@ -340,11 +342,19 @@
                 { id: 'p', label: 'Perimeter', val: perimeter }
             ];
 
+            // LOGIC-SAFE HIDING: 
+            // 1. Always hide Area and Perimeter for the challenge
+            // 2. Hide ONE missing vertical (E or C or A) - ensuring others are shown
+            // 3. Hide ONE missing horizontal (F or D or B) - ensuring others are shown
             const hideThese = [6, 7]; 
-            while(hideThese.length < 5) {
-                let r = Math.floor(Math.random() * 6);
-                if(!hideThese.includes(r)) hideThese.push(r);
-            }
+            
+            // Choose one vertical to hide
+            const vOptions = [0, 2, 4];
+            hideThese.push(vOptions[Math.floor(Math.random() * 3)]);
+            
+            // Choose one horizontal to hide
+            const hOptions = [1, 3, 5];
+            hideThese.push(hOptions[Math.floor(Math.random() * 3)]);
 
             fields.forEach((f, i) => addInputField(f, hideThese.includes(i)));
             drawLShape(currentProblem, hideThese);
@@ -365,7 +375,7 @@
         function drawRect(l, w, hidden) {
             const sc = 18;
             const ox = (400 - w * sc) / 2;
-            const oy = (280 - l * sc) / 2; // Adjusted for taller SVG
+            const oy = (280 - l * sc) / 2;
             
             const shape = document.createElementNS("http://www.w3.org/2000/svg", "rect");
             shape.setAttribute("x", ox);
@@ -381,8 +391,8 @@
         }
 
         function drawLShape(p, hidden) {
-            const sc = 18; // Reduced slightly to avoid bottom clipping
-            const ox = 70, oy = 40; // Shifted origin
+            const sc = 16; 
+            const ox = 80, oy = 40; 
             
             const wT = p.sB * sc;
             const hL = p.sA * sc;
@@ -391,23 +401,28 @@
             const hI = p.sE * sc;
             const wB = p.sD * sc;
 
+            // Draw L-shape
             const pathStr = `M ${ox},${oy} h ${wT} v ${hR} h -${wI} v ${hI} h -${wB} z`;
             const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
             path.setAttribute("d", pathStr);
             path.setAttribute("class", "blueprint-shape");
             svg.appendChild(path);
 
-            // Side A (Left)
+            // Add Guide Line for additive area (The "Cut")
+            const guide = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            guide.setAttribute("x1", ox + wB);
+            guide.setAttribute("y1", oy + hR);
+            guide.setAttribute("x2", ox + wT);
+            guide.setAttribute("y2", oy + hR);
+            guide.setAttribute("class", "guide-line");
+            svg.appendChild(guide);
+
+            // Labels
             addLabel(ox - 30, oy + hL/2, hidden.includes(0) ? "A" : p.sA, hidden.includes(0));
-            // Side B (Top)
             addLabel(ox + wT/2, oy - 15, hidden.includes(1) ? "B" : p.sB, hidden.includes(1));
-            // Side C (Right outer)
             addLabel(ox + wT + 30, oy + hR/2, hidden.includes(2) ? "C" : p.sC, hidden.includes(2));
-            // Side D (Bottom outer) - Added more spacing (35px) to clear the bottom
             addLabel(ox + wB/2, oy + hL + 35, hidden.includes(3) ? "D" : p.sD, hidden.includes(3));
-            // Side E (Inner Vert)
             addLabel(ox + wB + 25, oy + hR + hI/2, hidden.includes(4) ? "E" : p.sE, hidden.includes(4));
-            // Side F (Inner Horiz)
             addLabel(ox + wB + wI/2, oy + hR - 15, hidden.includes(5) ? "F" : p.sF, hidden.includes(5));
         }
 
@@ -445,12 +460,9 @@
         function showHelp(fieldId) {
             const titleMap = { l: 'Length', w: 'Width', a: 'Area', p: 'Perimeter' };
             const sideLabel = fieldId.startsWith('s') ? fieldId.substring(1) : fieldId;
-            
             document.getElementById('help-title').innerText = `Architect Tip: Finding ${titleMap[fieldId] || 'Side ' + sideLabel}`;
-            
             let helpKey = (fieldId === 'a' || fieldId === 'p') ? fieldId : (mode === 'normal' ? fieldId : 'side');
             document.getElementById('help-text').innerHTML = tips[mode][helpKey];
-            
             document.getElementById('help-modal').style.display = 'block';
             document.getElementById('overlay').style.display = 'block';
         }
