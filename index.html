@@ -23,30 +23,29 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh; /* Fixed height for viewport */
+            height: 100vh;
             width: 100vw;
-            overflow: hidden; /* Prevent body scroll */
+            overflow: hidden;
         }
 
         .retro-card {
             background-color: var(--cream-paper);
             border: 3px solid var(--earth-brown);
-            border-radius: 30px 10px 30px 10px;
-            box-shadow: 6px 6px 0px var(--earth-brown);
-            max-width: 700px;
-            width: 90%;
-            max-height: 95vh; /* Keep it inside the screen */
-            padding: 1.5rem;
+            border-radius: 40px 15px 40px 15px;
+            box-shadow: 8px 8px 0px var(--earth-brown);
+            max-width: 850px;
+            width: 95%;
+            max-height: 98vh;
+            padding: 1rem 2rem;
             position: relative;
             display: flex;
             flex-direction: column;
-            overflow-y: auto; /* Scroll inside card if absolutely necessary on tiny screens */
         }
 
         h1 {
             font-family: 'Gaegu', cursive;
             color: var(--earth-brown);
-            font-size: clamp(2rem, 5vh, 3rem); /* Scalable font */
+            font-size: clamp(2rem, 5vh, 3rem);
             line-height: 1;
         }
 
@@ -63,14 +62,29 @@
             white-space: nowrap;
         }
 
-        .organic-btn:hover {
-            transform: translateY(-2px);
-            background-color: #6e8c52;
+        .organic-btn:hover { transform: translateY(-2px); background-color: #6e8c52; }
+        .organic-btn:active { transform: translateY(2px); box-shadow: 0 0px 0px #5e7a45; }
+
+        .mode-toggle {
+            display: flex;
+            background: #e9e2d0;
+            padding: 4px;
+            border-radius: 30px;
+            border: 2px solid var(--earth-brown);
         }
 
-        .organic-btn:active {
-            transform: translateY(2px);
-            box-shadow: 0 0px 0px #5e7a45;
+        .mode-btn {
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .mode-btn.active {
+            background: var(--earth-brown);
+            color: white;
         }
 
         .input-wrapper {
@@ -83,78 +97,83 @@
         .input-field {
             background: #fff;
             border: 2px dashed var(--earth-brown);
-            border-radius: 10px;
+            border-radius: 12px;
             padding: 6px;
-            width: 80px;
+            width: 85px;
             text-align: center;
             font-size: 1.1rem;
             color: var(--clay-orange);
             font-weight: bold;
         }
 
-        .input-field:focus {
-            outline: none;
-            border-style: solid;
-            background-color: #fffdf5;
-        }
+        .input-field:focus { outline: none; border-style: solid; background-color: #fffdf5; }
 
         .help-tip-btn {
             position: absolute;
-            right: -10px;
+            right: -12px;
             top: 22px;
             background: var(--clay-orange);
             color: white;
-            width: 22px;
-            height: 22px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: bold;
             cursor: pointer;
             border: 2px solid var(--earth-brown);
-            transition: transform 0.2s;
             z-index: 10;
         }
 
-        #rectangle-viz {
-            border: 4px solid var(--earth-brown);
-            background-color: rgba(129, 162, 99, 0.2);
-            border-radius: 8px;
+        #shape-container {
+            flex-grow: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 1.5rem auto; /* Reduced margin for Chromebooks */
+            min-height: 240px; /* Slightly taller for safety */
             position: relative;
-            transition: all 0.5s ease;
-            max-width: 100%;
         }
 
-        .label-l { position: absolute; left: -55px; font-weight: bold; color: var(--earth-brown); font-size: 0.85rem; }
-        .label-w { position: absolute; top: -30px; font-weight: bold; color: var(--earth-brown); font-size: 0.85rem; }
-
-        .status-msg {
-            min-height: 1.25rem;
-            font-weight: 600;
-            font-size: 0.9rem;
+        .blueprint-shape {
+            fill: rgba(129, 162, 99, 0.15);
+            stroke: var(--earth-brown);
+            stroke-width: 4;
+            stroke-linejoin: round;
+            stroke-linecap: round;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .score-pill {
-            background: var(--earth-brown);
-            color: var(--cream-paper);
-            padding: 3px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
-        .locked {
-            background-color: #f0f0f0;
-            border-style: solid;
-            color: #888;
+        .segment-label {
+            font-weight: 700;
+            font-size: 16px;
+            fill: var(--earth-brown);
+            text-anchor: middle;
+            animation: fadeIn 0.8s ease;
         }
 
-        /* Help Modal Styles */
+        .unknown-label {
+            fill: var(--clay-orange);
+            font-size: 19px;
+            text-decoration: underline;
+            font-weight: 800;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .status-msg { min-height: 1.5rem; font-weight: 700; font-size: 1rem; }
+        .score-pill { background: var(--earth-brown); color: var(--cream-paper); padding: 4px 15px; border-radius: 20px; font-size: 0.9rem; }
+        .locked { background-color: #f1f1f1; border-style: solid; color: #888; }
+
         #help-modal {
             display: none;
             position: absolute;
@@ -164,29 +183,17 @@
             width: 85%;
             background: white;
             border: 3px solid var(--earth-brown);
-            border-radius: 20px;
-            padding: 1.25rem;
+            border-radius: 25px;
+            padding: 1.5rem;
             z-index: 100;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
         .overlay {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.3);
-            z-index: 90;
-        }
-
-        /* Adjustments for tight heights (Chromebooks) */
-        @media (max-height: 600px) {
-            .retro-card { padding: 1rem; }
-            h1 { margin-bottom: 0.25rem; }
-            #rectangle-viz { margin: 1rem auto; }
-            .grid { gap: 0.5rem; padding: 0.75rem; }
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.3); z-index: 90;
         }
     </style>
 </head>
@@ -195,212 +202,264 @@
     <div id="overlay" class="overlay" onclick="closeHelp()"></div>
     
     <div id="help-modal">
-        <h3 id="help-title" class="text-lg font-bold mb-2 text-stone-800">Architect's Tip</h3>
-        <p id="help-text" class="text-sm text-stone-600 mb-4"></p>
-        <button onclick="closeHelp()" class="w-full py-2 bg-stone-200 rounded-lg font-bold hover:bg-stone-300">Got it!</button>
+        <h3 id="help-title" class="text-xl font-bold mb-2 text-stone-800">Architect's Tip</h3>
+        <p id="help-text" class="text-stone-600 mb-4"></p>
+        <button onclick="closeHelp()" class="w-full py-3 bg-stone-200 rounded-xl font-bold hover:bg-stone-300 transition-colors">Got it!</button>
     </div>
 
     <div class="retro-card">
         <div class="flex justify-between items-center mb-2">
             <div class="score-pill">Score: <span id="score">0</span></div>
-            <div class="text-[10px] sm:text-xs font-bold text-stone-500 italic">"Measure twice, build once!"</div>
+            <div class="mode-toggle">
+                <div id="mode-normal" class="mode-btn active" onclick="setMode('normal')">Standard</div>
+                <div id="mode-challenge" class="mode-btn" onclick="setMode('challenge')">Challenge</div>
+            </div>
         </div>
 
         <header class="text-center mb-2">
             <h1>Rectangle Architect</h1>
-            <p class="text-xs sm:text-sm text-stone-600">Solve for the missing measurements.</p>
+            <p id="sub-title" class="text-stone-500 font-medium">Solve for the missing blueprint dimensions.</p>
         </header>
 
-        <!-- Visualization Area -->
-        <div class="flex-grow flex items-center justify-center min-h-[120px]">
-            <div id="rectangle-viz" style="width: 150px; height: 100px;">
-                <div id="label-w" class="label-w">Width: ?</div>
-                <div id="label-l" class="label-l">Length: ?</div>
-            </div>
+        <div id="shape-container">
+            <!-- Increased height and centered view -->
+            <svg id="svg-viz" width="400" height="280" viewBox="0 0 400 280"></svg>
         </div>
 
         <!-- Inputs Area -->
-        <div class="grid grid-cols-2 gap-x-8 gap-y-4 mb-4 bg-stone-100 p-4 rounded-xl border-2 border-stone-200">
-            <div class="input-wrapper">
-                <label class="text-[10px] uppercase font-bold text-stone-500 mb-1">Length (L)</label>
-                <input type="number" id="in-l" class="input-field" placeholder="?">
-                <div id="help-l" class="help-tip-btn" onclick="showHelp('length')">?</div>
-            </div>
-            <div class="input-wrapper">
-                <label class="text-[10px] uppercase font-bold text-stone-500 mb-1">Width (W)</label>
-                <input type="number" id="in-w" class="input-field" placeholder="?">
-                <div id="help-w" class="help-tip-btn" onclick="showHelp('width')">?</div>
-            </div>
-            <div class="input-wrapper">
-                <label class="text-[10px] uppercase font-bold text-stone-400 mb-1">Area (L × W)</label>
-                <input type="number" id="in-a" class="input-field" placeholder="?">
-                <div id="help-a" class="help-tip-btn" onclick="showHelp('area')">?</div>
-            </div>
-            <div class="input-wrapper">
-                <label class="text-[10px] uppercase font-bold text-stone-400 mb-1">Perimeter (2L + 2W)</label>
-                <input type="number" id="in-p" class="input-field" placeholder="?">
-                <div id="help-p" class="help-tip-btn" onclick="showHelp('perimeter')">?</div>
-            </div>
+        <div id="inputs-grid" class="grid grid-cols-4 gap-4 mb-4 bg-stone-100 p-5 rounded-2xl border-2 border-stone-200 shadow-inner">
+            <!-- Dynamically populated -->
         </div>
 
         <div id="feedback" class="status-msg text-center mb-3"></div>
 
-        <div class="flex flex-wrap justify-center gap-3">
-            <button onclick="checkAnswer()" id="check-btn" class="organic-btn">Check Blueprint!</button>
+        <div class="flex flex-wrap justify-center gap-4 mb-2">
+            <button onclick="checkAnswer()" class="organic-btn">Check Blueprint!</button>
             <button onclick="generateProblem()" class="organic-btn" style="background-color: var(--clay-orange); box-shadow: 0 4px 0px #b05a41;">New Project</button>
         </div>
     </div>
 
     <script>
+        let mode = 'normal';
         let currentProblem = {};
         let score = 0;
 
-        const elL = document.getElementById('in-l');
-        const elW = document.getElementById('in-w');
-        const elA = document.getElementById('in-a');
-        const elP = document.getElementById('in-p');
-        
-        const helpBtns = {
-            length: document.getElementById('help-l'),
-            width: document.getElementById('help-w'),
-            area: document.getElementById('help-a'),
-            perimeter: document.getElementById('help-p')
-        };
-
-        const viz = document.getElementById('rectangle-viz');
+        const svg = document.getElementById('svg-viz');
+        const grid = document.getElementById('inputs-grid');
         const feedback = document.getElementById('feedback');
         const scoreDisplay = document.getElementById('score');
-        const helpModal = document.getElementById('help-modal');
-        const overlay = document.getElementById('overlay');
 
         const tips = {
-            length: [
-                "<b>If you have the Area:</b> Remember, Area = Length × Width. To find the missing side, divide the Area by the Width!",
-                "<b>If you have the Perimeter:</b> Subtract the two Widths from the Perimeter, then divide what's left by 2."
-            ],
-            width: [
-                "<b>If you have the Area:</b> Remember, Area = Length × Width. To find the missing side, divide the Area by the Length!",
-                "<b>If you have the Perimeter:</b> Subtract the two Lengths from the Perimeter, then divide what's left by 2."
-            ],
-            area: [
-                "<b>Area is the space inside!</b> Multiply the Length by the Width to find it (L × W)."
-            ],
-            perimeter: [
-                "<b>Perimeter is the distance around!</b> Add up all four sides: L + L + W + W. Or do (L + W) × 2."
-            ]
+            normal: {
+                l: "<b>To find Length:</b><br>If you have Area: Area ÷ Width.<br>If you have Perimeter: (Perimeter ÷ 2) - Width.",
+                w: "<b>To find Width:</b><br>If you have Area: Area ÷ Length.<br>If you have Perimeter: (Perimeter ÷ 2) - Length.",
+                a: "Area is the space inside! Multiply Length by Width (L × W).",
+                p: "Perimeter is the distance around. Add all 4 sides: L + L + W + W."
+            },
+            challenge: {
+                side: "<b>The Matching Rule:</b><br>Opposite parallel sides must add up! For example, the total height of the left side (A) must equal the sum of the two vertical segments on the right (C + E).",
+                a: "<b>Split it up!</b> Cut the L-shape into two separate rectangles. Find the area of each, then add them together.",
+                p: "<b>Walk the edge:</b> Add all 6 sides together. Don't skip the inner corners!"
+            }
         };
+
+        function setMode(newMode) {
+            mode = newMode;
+            document.getElementById('mode-normal').classList.toggle('active', mode === 'normal');
+            document.getElementById('mode-challenge').classList.toggle('active', mode === 'challenge');
+            document.getElementById('sub-title').innerText = mode === 'normal' ? "Standard Rectangles" : "Composite L-Shapes";
+            
+            grid.className = mode === 'normal' 
+                ? "grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4 bg-stone-100 p-5 rounded-2xl border-2 border-stone-200 shadow-inner"
+                : "grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4 bg-stone-100 p-4 rounded-2xl border-2 border-stone-200 shadow-inner";
+            
+            generateProblem();
+        }
 
         function generateProblem() {
             feedback.innerText = "";
             feedback.className = "status-msg text-center mb-3";
-            
-            const length = Math.floor(Math.random() * 9) + 3; // Keep max size a bit smaller for screens
-            const width = Math.floor(Math.random() * 9) + 3;
-            const area = length * width;
-            const perimeter = 2 * (length + width);
+            svg.innerHTML = "";
+            grid.innerHTML = "";
 
-            currentProblem = { length, width, area, perimeter };
+            if (mode === 'normal') {
+                createNormalProblem();
+            } else {
+                createChallengeProblem();
+            }
+        }
 
-            const scenarios = [
-                ['length', 'area'], 
-                ['width', 'area'],
-                ['length', 'perimeter'],
-                ['width', 'perimeter'],
-                ['area', 'perimeter']
+        function createNormalProblem() {
+            const l = Math.floor(Math.random() * 7) + 4;
+            const w = Math.floor(Math.random() * 7) + 4;
+            currentProblem = { l, w, a: l * w, p: 2 * (l + w), type: 'normal' };
+
+            const fields = [
+                { id: 'l', label: 'Length', val: l },
+                { id: 'w', label: 'Width', val: w },
+                { id: 'a', label: 'Area', val: currentProblem.a },
+                { id: 'p', label: 'Perimeter', val: currentProblem.p }
             ];
 
-            const scenario = scenarios[Math.floor(Math.random() * scenarios.length)];
-            
-            [elL, elW, elA, elP].forEach(el => {
-                el.value = "";
-                el.disabled = false;
-                el.classList.remove('locked');
-            });
-
-            Object.keys(helpBtns).forEach(key => {
-                if (scenario.includes(key)) {
-                    helpBtns[key].style.display = 'none';
-                } else {
-                    helpBtns[key].style.display = 'flex';
-                }
-            });
-
-            if (scenario.includes('length')) setFixed(elL, length);
-            if (scenario.includes('width')) setFixed(elW, width);
-            if (scenario.includes('area')) setFixed(elA, area);
-            if (scenario.includes('perimeter')) setFixed(elP, perimeter);
-
-            updateVisuals();
-        }
-
-        function setFixed(el, val) {
-            el.value = val;
-            el.disabled = true;
-            el.classList.add('locked');
-        }
-
-        function updateVisuals() {
-            // Adaptive scaling for the visualization
-            const cardWidth = document.querySelector('.retro-card').offsetWidth;
-            const maxVizWidth = cardWidth * 0.5;
-            const scale = Math.min(maxVizWidth / 12, 18); // Dynamically calculate scale
-            
-            viz.style.width = (currentProblem.width * scale) + 'px';
-            viz.style.height = (currentProblem.length * scale) + 'px';
-
-            document.getElementById('label-w').innerText = elW.disabled ? `W: ${currentProblem.width}` : `W: ?`;
-            document.getElementById('label-l').innerText = elL.disabled ? `L: ${currentProblem.length}` : `L: ?`;
-        }
-
-        function showHelp(type) {
-            document.getElementById('help-title').innerText = `How to find ${type.charAt(0).toUpperCase() + type.slice(1)}:`;
-            let text = "";
-            
-            if (type === 'length' || type === 'width') {
-                text = tips[type].join("<br><br>");
-            } else {
-                text = tips[type][0];
+            const hideIdx = [];
+            while(hideIdx.length < 2) {
+                let r = Math.floor(Math.random() * 4);
+                if(!hideIdx.includes(r)) hideIdx.push(r);
             }
-            
-            document.getElementById('help-text').innerHTML = text;
-            helpModal.style.display = 'block';
-            overlay.style.display = 'block';
+
+            fields.forEach((f, i) => addInputField(f, hideIdx.includes(i)));
+            drawRect(l, w, hideIdx);
         }
 
-        function closeHelp() {
-            helpModal.style.display = 'none';
-            overlay.style.display = 'none';
+        function createChallengeProblem() {
+            const h_tot = Math.floor(Math.random() * 4) + 7; 
+            const w_tot = Math.floor(Math.random() * 4) + 7; 
+            const h_cut = Math.floor(Math.random() * 3) + 2; 
+            const w_cut = Math.floor(Math.random() * 3) + 2; 
+            
+            const sA = h_tot; // Left
+            const sB = w_tot; // Top
+            const sC = h_tot - h_cut; // Right
+            const sD = w_tot - w_cut; // Bottom
+            const sE = h_cut; // Inner Vertical
+            const sF = w_cut; // Inner Horizontal
+            
+            const area = (sA * sD) + (sC * sF);
+            const perimeter = sA + sB + sC + sD + sE + sF;
+
+            currentProblem = { sA, sB, sC, sD, sE, sF, a: area, p: perimeter, type: 'challenge' };
+
+            const fields = [
+                { id: 'sA', label: 'Side A', val: sA },
+                { id: 'sB', label: 'Side B', val: sB },
+                { id: 'sC', label: 'Side C', val: sC },
+                { id: 'sD', label: 'Side D', val: sD },
+                { id: 'sE', label: 'Side E', val: sE },
+                { id: 'sF', label: 'Side F', val: sF },
+                { id: 'a', label: 'Total Area', val: area },
+                { id: 'p', label: 'Perimeter', val: perimeter }
+            ];
+
+            const hideThese = [6, 7]; 
+            while(hideThese.length < 5) {
+                let r = Math.floor(Math.random() * 6);
+                if(!hideThese.includes(r)) hideThese.push(r);
+            }
+
+            fields.forEach((f, i) => addInputField(f, hideThese.includes(i)));
+            drawLShape(currentProblem, hideThese);
+        }
+
+        function addInputField(field, isHidden) {
+            const wrapper = document.createElement('div');
+            wrapper.className = "input-wrapper";
+            wrapper.innerHTML = `
+                <label class="text-[10px] uppercase font-bold text-stone-500 mb-1">${field.label}</label>
+                <input type="number" id="in-${field.id}" class="input-field ${!isHidden ? 'locked' : ''}" 
+                       value="${!isHidden ? field.val : ''}" ${!isHidden ? 'disabled' : ''}>
+                ${isHidden ? `<div class="help-tip-btn" onclick="showHelp('${field.id}')">?</div>` : ''}
+            `;
+            grid.appendChild(wrapper);
+        }
+
+        function drawRect(l, w, hidden) {
+            const sc = 18;
+            const ox = (400 - w * sc) / 2;
+            const oy = (280 - l * sc) / 2; // Adjusted for taller SVG
+            
+            const shape = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            shape.setAttribute("x", ox);
+            shape.setAttribute("y", oy);
+            shape.setAttribute("width", w * sc);
+            shape.setAttribute("height", l * sc);
+            shape.setAttribute("rx", "10");
+            shape.setAttribute("class", "blueprint-shape");
+            svg.appendChild(shape);
+
+            addLabel(ox - 35, oy + (l*sc)/2, hidden.includes(0) ? "L" : l, hidden.includes(0));
+            addLabel(ox + (w*sc)/2, oy - 15, hidden.includes(1) ? "W" : w, hidden.includes(1));
+        }
+
+        function drawLShape(p, hidden) {
+            const sc = 18; // Reduced slightly to avoid bottom clipping
+            const ox = 70, oy = 40; // Shifted origin
+            
+            const wT = p.sB * sc;
+            const hL = p.sA * sc;
+            const hR = p.sC * sc;
+            const wI = p.sF * sc;
+            const hI = p.sE * sc;
+            const wB = p.sD * sc;
+
+            const pathStr = `M ${ox},${oy} h ${wT} v ${hR} h -${wI} v ${hI} h -${wB} z`;
+            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            path.setAttribute("d", pathStr);
+            path.setAttribute("class", "blueprint-shape");
+            svg.appendChild(path);
+
+            // Side A (Left)
+            addLabel(ox - 30, oy + hL/2, hidden.includes(0) ? "A" : p.sA, hidden.includes(0));
+            // Side B (Top)
+            addLabel(ox + wT/2, oy - 15, hidden.includes(1) ? "B" : p.sB, hidden.includes(1));
+            // Side C (Right outer)
+            addLabel(ox + wT + 30, oy + hR/2, hidden.includes(2) ? "C" : p.sC, hidden.includes(2));
+            // Side D (Bottom outer) - Added more spacing (35px) to clear the bottom
+            addLabel(ox + wB/2, oy + hL + 35, hidden.includes(3) ? "D" : p.sD, hidden.includes(3));
+            // Side E (Inner Vert)
+            addLabel(ox + wB + 25, oy + hR + hI/2, hidden.includes(4) ? "E" : p.sE, hidden.includes(4));
+            // Side F (Inner Horiz)
+            addLabel(ox + wB + wI/2, oy + hR - 15, hidden.includes(5) ? "F" : p.sF, hidden.includes(5));
+        }
+
+        function addLabel(x, y, text, isUnknown) {
+            const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            label.setAttribute("x", x);
+            label.setAttribute("y", y);
+            label.setAttribute("class", "segment-label" + (isUnknown ? " unknown-label" : ""));
+            label.textContent = text;
+            svg.appendChild(label);
         }
 
         function checkAnswer() {
-            const userL = parseInt(elL.value);
-            const userW = parseInt(elW.value);
-            const userA = parseInt(elA.value);
-            const userP = parseInt(elP.value);
+            let correct = true;
+            const inputs = grid.querySelectorAll('input');
+            
+            inputs.forEach(input => {
+                const id = input.id.replace('in-', '');
+                if (parseInt(input.value) !== currentProblem[id]) {
+                    correct = false;
+                }
+            });
 
-            const isCorrect = 
-                userL === currentProblem.length &&
-                userW === currentProblem.width &&
-                userA === currentProblem.area &&
-                userP === currentProblem.perimeter;
-
-            if (isCorrect) {
-                feedback.innerText = "🌟 Perfect architect! Dimensions verified.";
+            if (correct) {
+                feedback.innerText = "🌟 Perfect Architect! Your dimensions are spot on.";
                 feedback.className = "status-msg text-center mb-3 text-green-600";
-                score += 10;
+                score += (mode === 'challenge' ? 30 : 10);
                 scoreDisplay.innerText = score;
-                
-                document.getElementById('label-w').innerText = `W: ${currentProblem.width}`;
-                document.getElementById('label-l').innerText = `L: ${currentProblem.length}`;
-                Object.values(helpBtns).forEach(b => b.style.display = 'none');
             } else {
-                feedback.innerText = "Check your measurements! Something is slightly off.";
+                feedback.innerText = "Oops! Those numbers don't fit the blueprint.";
                 feedback.className = "status-msg text-center mb-3 text-red-500";
             }
         }
 
-        // Listen for window resize to adjust rectangle scaling
-        window.onresize = updateVisuals;
+        function showHelp(fieldId) {
+            const titleMap = { l: 'Length', w: 'Width', a: 'Area', p: 'Perimeter' };
+            const sideLabel = fieldId.startsWith('s') ? fieldId.substring(1) : fieldId;
+            
+            document.getElementById('help-title').innerText = `Architect Tip: Finding ${titleMap[fieldId] || 'Side ' + sideLabel}`;
+            
+            let helpKey = (fieldId === 'a' || fieldId === 'p') ? fieldId : (mode === 'normal' ? fieldId : 'side');
+            document.getElementById('help-text').innerHTML = tips[mode][helpKey];
+            
+            document.getElementById('help-modal').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function closeHelp() {
+            document.getElementById('help-modal').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+
         window.onload = generateProblem;
     </script>
 </body>
